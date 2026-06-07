@@ -799,7 +799,7 @@ const componentsGrid = document.getElementById('componentsGrid');
 components.forEach((comp, i) => {
   const card = document.createElement('div');
   card.className = 'component-card';
-  card.onclick = () => showComponentDetail(i);
+  card.onclick = (event) => showComponentDetail(i, event);
   card.innerHTML = `
     <div class="comp-icon">${comp.icon}</div>
     <div class="comp-title">${comp.title}</div>
@@ -817,7 +817,7 @@ const stepsContainer = document.getElementById('stepsContainer');
 steps.forEach((step, i) => {
   const card = document.createElement('div');
   card.className = 'step-card';
-  card.onclick = () => showStepDetail(i);
+  card.onclick = (event) => showStepDetail(i, event);
   card.innerHTML = `
     <div class="step-number">${i + 1}</div>
     <div class="step-content">
@@ -854,7 +854,7 @@ function showSection(section) {
   closeDetail();
 }
 
-function showComponentDetail(index) {
+function showComponentDetail(index, event) {
   const comp = components[index];
   const panel = document.getElementById('detailPanel');
   const content = document.getElementById('detailContent');
@@ -898,7 +898,7 @@ function showComponentDetail(index) {
   panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function showStepDetail(index) {
+function showStepDetail(index, event) {
   const step = steps[index];
   const panel = document.getElementById('detailPanel');
   const content = document.getElementById('detailContent');
