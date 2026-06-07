@@ -526,9 +526,9 @@
 
   <!-- Navigation Tabs -->
   <div class="nav-tabs">
-    <div class="nav-tab active" onclick="showSection('components')">🧩 Komponen PC</div>
-    <div class="nav-tab" onclick="showSection('steps')">🔧 Langkah Rakit</div>
-    <div class="nav-tab" onclick="showSection('tips')">💡 Tips & Trik</div>
+    <div class="nav-tab active" onclick="showSection('components', event)">🧩 Komponen PC</div>
+    <div class="nav-tab" onclick="showSection('steps', event)">🔧 Langkah Rakit</div>
+    <div class="nav-tab" onclick="showSection('tips', event)">💡 Tips & Trik</div>
   </div>
 
   <!-- Components Section -->
@@ -843,7 +843,7 @@ tipsContainer.innerHTML = `
   </div>
 `;
 
-function showSection(section) {
+function showSection(section, event) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   event.target.classList.add('active');
   
