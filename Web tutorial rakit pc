@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🖥️ Panduan Rakitan Komputer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  
+  body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 50%, #d9e2ec 100%);
+    min-height: 100vh;
+    color: #1a202c;
+    overflow-x: hidden;
+  }
+
+  .bg-pattern {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px 20px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px 20px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(255,255,255,0.5);
+  }
+
+  h1 {
+    font-size: 2.8em;
+    background: linear-gradient(135deg, #6366f1, #ec4899, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+    font-weight: 800;
+  }
+
+  .subtitle {
+    color: #64748b;
+    font-size: 1.1em;
+    margin-bottom: 15px;
+  }
+
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .stat {
+    background: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #6366f1;
+  }
+
+  .stat-label {
+    font-size: 0.8em;
+    color: #64748b;
+  }
+
+  .hint {
+    text-align: center;
+    color: #6366f1;
+    margin-bottom: 30px;
+    padding: 12px 20px;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 12px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.95em;
+  }
+
+  .section-title {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title::before {
+    content: '';
+    width: 5px;
+    height: 30px;
+    background: linear-gradient(180deg, #6366f1, #ec4899);
+    border-radius: 3px;
+  }
+
+  /* Components Grid */
+  .components-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .component-card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .component-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 4px;
+    background: linear-gradient(90deg, #6366f1, #ec4899);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+
+  .component-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .component-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.3);
+  }
+
+  .component-card.active {
+    border-color: #6366f1;
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+  }
+
+  .comp-icon {
+    font-size: 2.8em;
+    margin-bottom: 12px;
+  }
+
+  .comp-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #1e293b;
+    margin-bottom: 8px;
+  }
+
+  .comp-desc {
+    color: #64748b;
+    font-size: 0.9em;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .comp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .comp-tag {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.75em;
+    font-weight: 600;
+  }
+
+  .comp-price {
+    margin-top: 10px;
+    font-size: 0.85em;
+    color: #10b981;
+    font-weight: 600;
+  }
+
+  /* Steps Section */
+  .steps-container {
+    margin-bottom: 40px;
+  }
+
+  .step-card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    border-left: 4px solid #6366f1;
+  }
+
+  .step-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
+  }
+
+  .step-card.active {
+    border-left-color: #ec4899;
+    background: linear-gradient(135deg, white, rgba(236, 72, 153, 0.05));
+  }
+
+  .step-number {
+    min-width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #6366f1, #ec4899);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3em;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .step-content {
+    flex: 1;
+  }
+
+  .step-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #1e293b;
+    margin-bottom: 5px;
+  }
+
+  .step-desc {
+    color: #64748b;
+    font-size: 0.95em;
+    line-height: 1.6;
+  }
+
+  .step-time {
+    display: inline-block;
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 0.8em;
+    margin-top: 8px;
+    font-weight: 600;
+  }
+
+  /* Detail Panel */
+  .detail-panel {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-top: 20px;
+    box-shadow: 0 10px 40px rgba(99, 102, 241, 0.1);
+    display: none;
+    animation: slideUp 0.4s ease;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+  }
+
+  .detail-panel.show {
+    display: block;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .detail-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f1f5f9;
+  }
+
+  .detail-icon {
+    font-size: 3em;
+  }
+
+  .detail-title {
+    font-size: 1.8em;
+    color: #1e293b;
+    font-weight: bold;
+  }
+
+  .detail-subtitle {
+    color: #64748b;
+    font-size: 0.95em;
+  }
+
+  .detail-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .detail-content { grid-template-columns: 1fr; }
+    h1 { font-size: 2em; }
+    .step-card { flex-direction: column; }
+  }
+
+  .info-box {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border-left: 4px solid #6366f1;
+    padding: 18px;
+    border-radius: 12px;
+  }
+
+  .info-box.pink { border-left-color: #ec4899; }
+  .info-box.green { border-left-color: #10b981; }
+  .info-box.orange { border-left-color: #f59e0b; }
+
+  .info-box h3 {
+    color: #1e293b;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+  }
+
+  .info-box p, .info-box li {
+    color: #475569;
+    line-height: 1.7;
+    font-size: 0.95em;
+  }
+
+  .info-box ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .info-box li {
+    padding: 5px 0 5px 25px;
+    position: relative;
+  }
+
+  .info-box li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #10b981;
+    font-weight: bold;
+  }
+
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 15px;
+  }
+
+  .tip-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    padding: 15px;
+    border-radius: 12px;
+    transition: all 0.3s;
+  }
+
+  .tip-card:hover {
+    border-color: #6366f1;
+    transform: translateY(-3px);
+  }
+
+  .tip-icon {
+    font-size: 1.5em;
+    margin-bottom: 5px;
+  }
+
+  .tip-title {
+    font-weight: bold;
+    color: #1e293b;
+    font-size: 0.95em;
+    margin-bottom: 3px;
+  }
+
+  .tip-desc {
+    color: #64748b;
+    font-size: 0.8em;
+  }
+
+  .warning-box {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-left: 4px solid #f59e0b;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 15px;
+  }
+
+  .warning-box h4 {
+    color: #92400e;
+    margin-bottom: 8px;
+  }
+
+  .warning-box p {
+    color: #78350f;
+    font-size: 0.9em;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #fee2e2;
+    border: none;
+    color: #dc2626;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+    transition: all 0.3s;
+  }
+
+  .close-btn:hover {
+    background: #fecaca;
+    transform: rotate(90deg);
+  }
+
+  .detail-panel {
+    position: relative;
+  }
+
+  .nav-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .nav-tab {
+    padding: 10px 20px;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #64748b;
+    transition: all 0.3s;
+  }
+
+  .nav-tab:hover {
+    border-color: #6366f1;
+    color: #6366f1;
+  }
+
+  .nav-tab.active {
+    background: linear-gradient(135deg, #6366f1, #ec4899);
+    color: white;
+    border-color: transparent;
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: #64748b;
+    font-size: 0.9em;
+  }
+</style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+
+<div class="container">
+  <header>
+    <h1>🖥️ Panduan Rakitan Komputer</h1>
+    <p class="subtitle">Belajar merakit PC dari nol - Lengkap, Modern & Interaktif</p>
+    <div class="stats-bar">
+      <div class="stat">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Komponen Utama</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">10</div>
+        <div class="stat-label">Langkah Rakit</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3-5</div>
+        <div class="stat-label">Jam Pengerjaan</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Bisa DIY</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="hint">
+    💡 <strong>Cara Pakai:</strong> Klik komponen atau langkah untuk melihat detail lengkap. 
+    Mulai dari komponen dulu, baru pelajari cara merakitnya!
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showSection('components')">🧩 Komponen PC</div>
+    <div class="nav-tab" onclick="showSection('steps')">🔧 Langkah Rakit</div>
+    <div class="nav-tab" onclick="showSection('tips')">💡 Tips & Trik</div>
+  </div>
+
+  <!-- Components Section -->
+  <div id="componentsSection">
+    <h2 class="section-title">Komponen Utama PC</h2>
+    <div class="components-grid" id="componentsGrid"></div>
+  </div>
+
+  <!-- Steps Section -->
+  <div id="stepsSection" style="display:none;">
+    <h2 class="section-title">Langkah Merakit Komputer</h2>
+    <div class="steps-container" id="stepsContainer"></div>
+  </div>
+
+  <!-- Tips Section -->
+  <div id="tipsSection" style="display:none;">
+    <h2 class="section-title">Tips & Trik Penting</h2>
+    <div id="tipsContainer"></div>
+  </div>
+
+  <!-- Detail Panel -->
+  <div class="detail-panel" id="detailPanel">
+    <button class="close-btn" onclick="closeDetail()">✕</button>
+    <div id="detailContent"></div>
+  </div>
+
+  <footer>
+    <p>️ Panduan Rakitan Komputer Interaktif • Dibuat untuk pemula yang ingin belajar merakit PC sendiri</p>
+  </footer>
+</div>
+
+<script>
+const components = [
+  {
+    id: 'cpu',
+    icon: '🧠',
+    title: 'Processor (CPU)',
+    desc: 'Otak komputer yang memproses semua perhitungan dan instruksi',
+    tags: ['Intel', 'AMD', 'Core', 'Ryzen'],
+    price: 'Rp 1.5jt - 15jt',
+    detail: {
+      desc: 'CPU (Central Processing Unit) adalah komponen paling penting dalam komputer. Semua perhitungan, logika, dan eksekusi program dilakukan di sini. Pemilihan CPU sangat menentukan performa keseluruhan sistem.',
+      specs: ['Cores/Threads: 4-24 cores', 'Clock Speed: 3.0-5.8 GHz', 'Cache: 8-64 MB', 'TDP: 35-250W', 'Socket: LGA1700/AM5'],
+      tips: ['Pilih sesuai kebutuhan (gaming/kerja)', 'Perhatikan kompatibilitas socket motherboard', 'Jangan lupa beli cooler yang memadai', 'Intel vs AMD: keduanya bagus, pilih yang sesuai budget'],
+      warning: 'CPU sangat sensitif! Jangan sentuh pin di bawah CPU. Pastikan orientasi benar sebelum memasang.'
+    }
+  },
+  {
+    id: 'motherboard',
+    icon: '',
+    title: 'Motherboard',
+    desc: 'Papan sirkuit utama yang menghubungkan semua komponen',
+    tags: ['ASUS', 'MSI', 'Gigabyte', 'ATX'],
+    price: 'Rp 1jt - 8jt',
+    detail: {
+      desc: 'Motherboard adalah fondasi sistem komputer. Semua komponen terhubung melalui motherboard. Pemilihan motherboard menentukan fitur, upgrade path, dan kompatibilitas komponen lain.',
+      specs: ['Form Factor: ATX/mATX/ITX', 'Socket: LGA1700/AM5', 'RAM Slots: 2-4 DDR5', 'PCIe Slots: 1-3', 'Storage: M.2 NVMe slots'],
+      tips: ['Pastikan socket kompatibel dengan CPU', 'Perhatikan jumlah slot RAM dan PCIe', 'Cek fitur WiFi/Bluetooth built-in', 'Pilih brand terpercaya (ASUS, MSI, Gigabyte)'],
+      warning: 'Motherboard mahal dan sensitif. Jangan letakkan di permukaan konduktif. Pasang I/O shield sebelum motherboard.'
+    }
+  },
+  {
+    id: 'ram',
+    icon: '💾',
+    title: 'RAM (Memory)',
+    desc: 'Memori sementara untuk menyimpan data yang sedang diproses',
+    tags: ['DDR4', 'DDR5', '16GB', '32GB'],
+    price: 'Rp 500rb - 3jt',
+    detail: {
+      desc: 'RAM (Random Access Memory) menyimpan data yang sedang aktif digunakan. Semakin besar RAM, semakin banyak aplikasi yang bisa berjalan bersamaan tanpa lag.',
+      specs: ['Capacity: 8-64 GB', 'Type: DDR4/DDR5', 'Speed: 3200-7200 MHz', 'Channels: Dual/Quad', 'Latency: CL14-CL40'],
+      tips: ['Minimum 16GB untuk gaming modern', 'Gunakan dual channel (2 stick) untuk performa optimal', 'DDR5 lebih cepat tapi lebih mahal', 'Cek kompatibilitas dengan motherboard'],
+      warning: 'RAM hanya bisa dipasang satu arah. Jangan dipaksa! Pastikan notch sejajar dengan slot.'
+    }
+  },
+  {
+    id: 'gpu',
+    icon: '🎮',
+    title: 'VGA / GPU',
+    desc: 'Kartu grafis untuk rendering gambar, video, dan gaming',
+    tags: ['NVIDIA', 'AMD', 'RTX', 'RX'],
+    price: 'Rp 3jt - 25jt',
+    detail: {
+      desc: 'GPU (Graphics Processing Unit) bertanggung jawab untuk rendering grafis. Sangat penting untuk gaming, video editing, 3D rendering, dan AI/machine learning.',
+      specs: ['VRAM: 8-24 GB GDDR6/6X', 'CUDA Cores/Stream: 3000-16000', 'Clock: 1.5-2.5 GHz', 'TDP: 150-450W', 'Interface: PCIe 4.0 x16'],
+      tips: ['Pilih sesuai resolusi monitor (1080p/1440p/4K)', 'Perhatikan kebutuhan PSU', 'NVIDIA untuk ray tracing & DLSS', 'AMD untuk value for money'],
+      warning: 'GPU modern butuh PSU besar dan kabel power yang cukup. Pastikan casing muat (panjang GPU).'
+    }
+  },
+  {
+    id: 'storage',
+    icon: '💽',
+    title: 'Storage (SSD/HDD)',
+    desc: 'Media penyimpanan data permanen untuk OS, game, dan file',
+    tags: ['NVMe', 'SSD', 'HDD', '1TB'],
+    price: 'Rp 500rb - 3jt',
+    detail: {
+      desc: 'Storage menyimpan semua data secara permanen. SSD NVMe modern 10-50x lebih cepat dari HDD tradisional. Kombinasi SSD (untuk OS) + HDD (untuk data) adalah setup ideal.',
+      specs: ['SSD NVMe: 500GB-4TB', 'Speed: 3500-7000 MB/s', 'Interface: M.2 PCIe 4.0', 'HDD: 1-8 TB (backup)', 'Endurance: TBW rating'],
+      tips: ['Wajib SSD NVMe untuk OS dan aplikasi', 'Minimum 500GB untuk gaming', 'HDD untuk backup data besar', 'Cek slot M.2 di motherboard'],
+      warning: 'SSD NVMe hanya muat di slot M.2 yang tepat. Jangan tertukar dengan slot M.2 SATA.'
+    }
+  },
+  {
+    id: 'psu',
+    icon: '⚡',
+    title: 'Power Supply (PSU)',
+    desc: 'Sumber daya listrik untuk semua komponen komputer',
+    tags: ['80 Plus', 'Modular', '650W', '850W'],
+    price: 'Rp 700rb - 3jt',
+    detail: {
+      desc: 'PSU mengubah listrik AC dari stopkontak menjadi DC untuk komponen PC. PSU berkualitas buruk bisa merusak komponen lain! Jangan pelit di PSU.',
+      specs: ['Wattage: 550-1200W', 'Efficiency: 80 Plus Bronze/Gold/Platinum', 'Modular: Full/Semi/Non', 'Rails: Single/Multiple 12V', 'Warranty: 5-10 tahun'],
+      tips: ['Hitung total watt komponen + 20% headroom', 'Pilih 80 Plus Gold atau lebih', 'Full modular lebih rapi', 'Brand terpercaya: Corsair, Seasonic, EVGA'],
+      warning: 'PSU murahan bisa MELEDAK dan merusak semua komponen! Investasi di PSU berkualitas.'
+    }
+  },
+  {
+    id: 'cooling',
+    icon: '️',
+    title: 'Cooling System',
+    desc: 'Sistem pendingin untuk menjaga suhu komponen tetap aman',
+    tags: ['Air Cooler', 'AIO', 'Fan', 'Thermal'],
+    price: 'Rp 200rb - 2jt',
+    detail: {
+      desc: 'Sistem cooling menjaga suhu CPU dan komponen lain tetap dalam batas aman. Overheating bisa menyebabkan throttling (performa turun) atau bahkan kerusakan permanen.',
+      specs: ['Air Cooler: Tower/Dual Tower', 'AIO Liquid: 120/240/360mm', 'Case Fans: 120/140mm', 'Thermal Paste: Conductivity', 'Noise Level: 20-30 dB'],
+      tips: ['Stock cooler cukup untuk CPU entry-level', 'AIO 240mm untuk CPU mid-high end', 'Pastikan airflow casing baik', 'Ganti thermal paste setiap 2-3 tahun'],
+      warning: 'Jangan lupa pasang thermal paste! CPU tanpa cooler bisa rusak dalam hitungan detik saat dinyalakan.'
+    }
+  },
+  {
+    id: 'case',
+    icon: '📦',
+    title: 'Casing PC',
+    desc: 'Rumah/wadah untuk semua komponen komputer',
+    tags: ['ATX', 'mATX', 'RGB', 'Tempered'],
+    price: 'Rp 400rb - 2jt',
+    detail: {
+      desc: 'Casing melindungi semua komponen dan menentukan airflow sistem. Casing modern biasanya punya tempered glass side panel, RGB fans, dan cable management yang baik.',
+      specs: ['Form Factor: ATX/mATX/ITX', 'GPU Clearance: 300-400mm', 'CPU Cooler: 160-180mm', 'Fans: 3-7 included', 'Material: Steel + Tempered Glass'],
+      tips: ['Pastikan muat motherboard & GPU kamu', 'Cek airflow (mesh front lebih baik)', 'Cable management penting untuk kerapian', 'RGB opsional, airflow wajib'],
+      warning: 'Casing terlalu kecil bisa membuat komponen kepanasan. Selalu cek dimensi sebelum beli.'
+    }
+  }
+];
+
+const steps = [
+  {
+    title: 'Persiapan & Safety',
+    desc: 'Siapkan semua komponen, tools (obeng +), dan area kerja yang bersih. Gunakan anti-static wrist strap atau sentuh benda logam untuk menghilangkan listrik statis.',
+    time: '15 menit',
+    detail: {
+      desc: 'Persiapan yang baik adalah kunci rakitan sukses. Pastikan kamu punya semua komponen, obeng Phillips #2, dan area kerja yang luas serta bersih.',
+      checklist: ['Buka semua box komponen', 'Siapkan obeng Phillips #2', 'Pasang anti-static wrist strap', 'Bersihkan area kerja', 'Siapkan manual motherboard', 'Foto setiap langkah untuk dokumentasi'],
+      tips: ['Kerja di meja kayu, bukan karpet', 'Jangan rakit saat lelah/mengantuk', 'Matikan semua perangkat elektronik di sekitar', 'Simpan sekrup di wadah terpisah']
+    }
+  },
+  {
+    title: 'Pasang CPU ke Motherboard',
+    desc: 'Buka socket CPU, sejajarkan tanda segitiga di CPU dengan socket, lalu turunkan CPU dengan lembut. Kunci socket dengan tuas.',
+    time: '10 menit',
+    detail: {
+      desc: 'Ini langkah paling kritis! CPU sangat sensitif dan mahal. Pastikan orientasi benar sebelum menurunkan CPU ke socket.',
+      checklist: ['Buka tuas socket CPU', 'Cari tanda segitiga di CPU & socket', 'Sejajarkan dengan hati-hati', 'Turunkan CPU TANPA tekanan', 'Kunci tuas socket', 'Cek CPU terpasang rata'],
+      tips: ['CPU hanya muat satu arah - jangan dipaksa!', 'Pegang CPU dari sisi, jangan sentuh pin', 'Jika tidak masuk, cek orientasi lagi', 'Foto sebelum pasang untuk referensi']
+    }
+  },
+  {
+    title: 'Pasang RAM',
+    desc: 'Buka pengunci slot RAM, sejajarkan notch RAM dengan slot, tekan kuat sampai pengunci terkunci otomatis. Gunakan slot 2 & 4 untuk dual channel.',
+    time: '5 menit',
+    detail: {
+      desc: 'RAM mudah dipasang tapi harus di slot yang benar untuk dual channel performance. Biasanya slot 2 dan 4 (dari CPU) untuk dual channel.',
+      checklist: ['Buka pengunci slot RAM', 'Cek notch di RAM', 'Pasang di slot 2 & 4 (dual channel)', 'Tekan kuat sampai "klik"', 'Cek pengunci terkunci otomatis', 'Ulangi untuk stick kedua'],
+      tips: ['Dual channel = 2 stick di slot yang benar', 'Tekan dengan kuat tapi wajar', 'Jika tidak masuk, cek orientasi', 'RGB RAM pasang menghadap keluar']
+    }
+  },
+  {
+    title: 'Pasang M.2 SSD',
+    desc: 'Pasang SSD M.2 ke slot M.2 di motherboard dengan sudut 30°, tekan ke bawah, dan kunci dengan sekrup kecil.',
+    time: '5 menit',
+    detail: {
+      desc: 'SSD M.2 NVMe jauh lebih cepat dari SATA SSD. Pasang di slot M.2 terdekat dengan CPU untuk performa terbaik.',
+      checklist: ['Cari slot M.2 di motherboard', 'Lepas heatsink M.2 (jika ada)', 'Masukkan SSD dengan sudut 30°', 'Tekan ke bawah', 'Kunci dengan sekrup kecil', 'Pasang kembali heatsink'],
+      tips: ['Slot M.2 tercepat biasanya dekat CPU', 'Gunakan thermal pad untuk heatsink M.2', 'Sekrup M.2 sangat kecil - jangan sampai hilang', 'Cek kompatibilitas PCIe gen']
+    }
+  },
+  {
+    title: 'Pasang Motherboard ke Casing',
+    desc: 'Pasang I/O shield ke casing, pasang standoff, lalu letakkan motherboard dan kunci dengan sekrup.',
+    time: '15 menit',
+    detail: {
+      desc: 'Motherboard harus terpasang dengan benar agar tidak short circuit. Standoff sangat penting untuk isolasi.',
+      checklist: ['Pasang I/O shield ke casing', 'Pasang standoff sesuai form factor', 'Letakkan motherboard dengan hati-hati', 'Kunci semua sekrup (jangan terlalu kencang)', 'Cek motherboard tidak goyang', 'Sambungkan kabel front panel'],
+      tips: ['I/O shield harus klik sebelum motherboard', 'Standoff harus sesuai lubang motherboard', 'Jangan lupa kabel front panel (power, reset, LED)', 'Cable management mulai dari sini']
+    }
+  },
+  {
+    title: 'Pasang Power Supply (PSU)',
+    desc: 'Masukkan PSU ke casing (biasanya di bawah), kunci dengan 4 sekrup, dan sambungkan kabel utama ke motherboard.',
+    time: '10 menit',
+    detail: {
+      desc: 'PSU adalah jantung daya sistem. Pastikan kabel tersambung dengan benar dan cukup panjang untuk reach semua komponen.',
+      checklist: ['Masukkan PSU ke slot casing', 'Kunci dengan 4 sekrup', 'Sambungkan 24-pin ke motherboard', 'Sambungkan 8-pin CPU power', 'Sambungkan kabel SATA power', 'Route kabel dengan rapi'],
+      tips: ['PSU modular: pasang kabel yang dibutuhkan saja', '24-pin dan 8-pin CPU WAJIB tersambung', 'Cek orientasi kipas PSU (intake/exhaust)', 'Gunakan cable ties untuk kerapian']
+    }
+  },
+  {
+    title: 'Pasang CPU Cooler',
+    desc: 'Oleskan thermal paste seukuran biji beras di CPU, pasang cooler, dan sambungkan kabel fan ke header CPU_FAN.',
+    time: '15 menit',
+    detail: {
+      desc: 'Cooling sangat penting! Tanpa cooler, CPU bisa overheat dalam hitungan detik. Thermal paste harus tipis dan merata.',
+      checklist: ['Oleskan thermal paste (seukuran beras)', 'Pasang bracket cooler (jika perlu)', 'Letakkan cooler di atas CPU', 'Kunci sekrup dengan pola silang', 'Sambungkan kabel fan ke CPU_FAN', 'Cek cooler tidak goyang'],
+      tips: ['Thermal paste jangan kebanyakan!', 'Pola silang saat mengencangkan sekrup', 'CPU_FAN header WAJIB tersambung', 'AIO: pasang radiator di atas/depan casing']
+    }
+  },
+  {
+    title: 'Pasang VGA/GPU',
+    desc: 'Buka slot PCIe di casing, masukkan GPU ke slot PCIe x16, kunci dengan sekrup, dan sambungkan kabel power PCIe.',
+    time: '10 menit',
+    detail: {
+      desc: 'GPU modern besar dan berat. Pastikan slot PCIe kuat dan kabel power tersambung dengan benar.',
+      checklist: ['Buka bracket slot PCIe di casing', 'Buka pengunci slot PCIe', 'Masukkan GPU ke slot x16', 'Tekan sampai "klik"', 'Kunci dengan sekrup ke casing', 'Sambungkan kabel power PCIe (6/8-pin)'],
+      tips: ['GPU berat - support dengan bracket jika perlu', 'Kabel power PCIe WAJIB untuk GPU modern', 'Cek clearance dengan komponen lain', 'Gunakan kabel terpisah, bukan daisy chain']
+    }
+  },
+  {
+    title: 'Cable Management',
+    desc: 'Atur semua kabel dengan rapi menggunakan cable ties, route di belakang motherboard tray, dan pastikan airflow tidak terhalang.',
+    time: '20 menit',
+    detail: {
+      desc: 'Cable management yang baik meningkatkan airflow, estetika, dan memudahkan troubleshooting di masa depan.',
+      checklist: ['Group kabel sejenis', 'Route di belakang motherboard tray', 'Gunakan cable ties/velcro', 'Pastikan tidak ada kabel di depan fan', 'Cek semua koneksi tersambung', 'Foto hasil akhir'],
+      tips: ['Full modular PSU = lebih mudah cable management', 'Jangan terlalu kencang mengikat kabel', 'Sisakan slack untuk upgrade di masa depan', 'Cable combs untuk kabel yang terlihat']
+    }
+  },
+  {
+    title: 'Testing & First Boot',
+    desc: 'Sambungkan monitor, keyboard, mouse, dan power. Nyalakan PC, masuk BIOS, cek semua komponen terdeteksi, lalu install OS.',
+    time: '30 menit',
+    detail: {
+      desc: 'Moment of truth! Saatnya melihat apakah rakitan kamu berhasil. Jika tidak nyala, cek semua koneksi dan kabel power.',
+      checklist: ['Sambungkan monitor ke GPU (bukan motherboard!)', 'Sambungkan keyboard & mouse', 'Colok kabel power', 'Tekan tombol power', 'Masuk BIOS (tekan Del/F2)', 'Cek semua komponen terdeteksi', 'Install Windows/Linux dari USB'],
+      tips: ['Monitor HARUS colok ke GPU, bukan motherboard', 'Jika tidak nyala: cek 24-pin & 8-pin CPU', 'BIOS: cek suhu CPU normal (30-50°C)', 'Install OS dari USB flash drive', 'Update BIOS & driver setelah install OS']
+    }
+  }
+];
+
+const tipsData = [
+  { icon: '', title: 'Listrik Statis', desc: 'Selalu ground diri sebelum sentuh komponen' },
+  { icon: '📸', title: 'Dokumentasi', desc: 'Foto setiap langkah untuk troubleshooting' },
+  { icon: '📖', title: 'Baca Manual', desc: 'Manual motherboard adalah teman terbaikmu' },
+  { icon: '🌡️', title: 'Suhu Normal', desc: 'CPU idle: 30-50°C, Load: 60-85°C' },
+  { icon: '🔧', title: 'Tools Minimal', desc: 'Hanya butuh obeng Phillips #2' },
+  { icon: '⚡', title: 'PSU Berkualitas', desc: 'Jangan pelit di PSU - investasi keamanan' },
+  { icon: '💨', title: 'Airflow', desc: 'Intake depan, exhaust belakang/atas' },
+  { icon: '🎯', title: 'Kompatibilitas', desc: 'Cek socket, form factor, dan clearance' },
+  { icon: '🔄', title: 'Update Driver', desc: 'Update BIOS & driver setelah rakit' },
+  { icon: '🧹', title: 'Kebersihan', desc: 'Bersihkan debu setiap 3-6 bulan' },
+  { icon: '', title: 'Backup Data', desc: 'Selalu backup data penting secara rutin' },
+  { icon: '🎮', title: 'Stress Test', desc: 'Test dengan Cinebench/Furmark setelah rakit' }
+];
+
+// Render components
+const componentsGrid = document.getElementById('componentsGrid');
+components.forEach((comp, i) => {
+  const card = document.createElement('div');
+  card.className = 'component-card';
+  card.onclick = () => showComponentDetail(i);
+  card.innerHTML = `
+    <div class="comp-icon">${comp.icon}</div>
+    <div class="comp-title">${comp.title}</div>
+    <div class="comp-desc">${comp.desc}</div>
+    <div class="comp-tags">
+      ${comp.tags.map(t => `<span class="comp-tag">${t}</span>`).join('')}
+    </div>
+    <div class="comp-price">💰 ${comp.price}</div>
+  `;
+  componentsGrid.appendChild(card);
+});
+
+// Render steps
+const stepsContainer = document.getElementById('stepsContainer');
+steps.forEach((step, i) => {
+  const card = document.createElement('div');
+  card.className = 'step-card';
+  card.onclick = () => showStepDetail(i);
+  card.innerHTML = `
+    <div class="step-number">${i + 1}</div>
+    <div class="step-content">
+      <div class="step-title">${step.title}</div>
+      <div class="step-desc">${step.desc}</div>
+      <span class="step-time">⏱️ ${step.time}</span>
+    </div>
+  `;
+  stepsContainer.appendChild(card);
+});
+
+// Render tips
+const tipsContainer = document.getElementById('tipsContainer');
+tipsContainer.innerHTML = `
+  <div class="tips-grid">
+    ${tipsData.map(t => `
+      <div class="tip-card">
+        <div class="tip-icon">${t.icon}</div>
+        <div class="tip-title">${t.title}</div>
+        <div class="tip-desc">${t.desc}</div>
+      </div>
+    `).join('')}
+  </div>
+`;
+
+function showSection(section) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  document.getElementById('componentsSection').style.display = section === 'components' ? 'block' : 'none';
+  document.getElementById('stepsSection').style.display = section === 'steps' ? 'block' : 'none';
+  document.getElementById('tipsSection').style.display = section === 'tips' ? 'block' : 'none';
+  
+  closeDetail();
+}
+
+function showComponentDetail(index) {
+  const comp = components[index];
+  const panel = document.getElementById('detailPanel');
+  const content = document.getElementById('detailContent');
+
+  document.querySelectorAll('.component-card').forEach(c => c.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  content.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-icon">${comp.icon}</div>
+      <div>
+        <div class="detail-title">${comp.title}</div>
+        <div class="detail-subtitle">${comp.desc}</div>
+      </div>
+    </div>
+    <div class="detail-content">
+      <div class="info-box">
+        <h3>📋 Tentang ${comp.title}</h3>
+        <p>${comp.detail.desc}</p>
+      </div>
+      <div class="info-box pink">
+        <h3>⚙️ Spesifikasi Umum</h3>
+        <ul>
+          ${comp.detail.specs.map(s => `<li>${s}</li>`).join('')}
+        </ul>
+      </div>
+      <div class="info-box green">
+        <h3> Tips Memilih</h3>
+        <ul>
+          ${comp.detail.tips.map(t => `<li>${t}</li>`).join('')}
+        </ul>
+      </div>
+      <div class="warning-box">
+        <h4>⚠️ Peringatan Penting</h4>
+        <p>${comp.detail.warning}</p>
+      </div>
+    </div>
+  `;
+
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showStepDetail(index) {
+  const step = steps[index];
+  const panel = document.getElementById('detailPanel');
+  const content = document.getElementById('detailContent');
+
+  document.querySelectorAll('.step-card').forEach(c => c.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  content.innerHTML = `
+    <div class="detail-header">
+      <div class="step-number" style="min-width:60px;height:60px;font-size:1.5em;">${index + 1}</div>
+      <div>
+        <div class="detail-title">${step.title}</div>
+        <div class="detail-subtitle">⏱️ Estimasi: ${step.time}</div>
+      </div>
+    </div>
+    <div class="detail-content">
+      <div class="info-box">
+        <h3>📖 Penjelasan</h3>
+        <p>${step.detail.desc}</p>
+      </div>
+      <div class="info-box pink">
+        <h3>✅ Checklist</h3>
+        <ul>
+          ${step.detail.checklist.map(c => `<li>${c}</li>`).join('')}
+        </ul>
+      </div>
+      <div class="info-box green">
+        <h3> Tips Pro</h3>
+        <ul>
+          ${step.detail.tips.map(t => `<li>${t}</li>`).join('')}
+        </ul>
+      </div>
+      <div class="info-box orange">
+        <h3> Langkah Selanjutnya</h3>
+        <p>${index < steps.length - 1 ? `Setelah ini, lanjut ke: <strong>${steps[index + 1].title}</strong>` : '🎉 Selamat! PC kamu sudah siap digunakan!'}</p>
+      </div>
+    </div>
+  `;
+
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('show');
+  document.querySelectorAll('.component-card, .step-card').forEach(c => c.classList.remove('active'));
+}
+</script>
+</body>
+</html>
